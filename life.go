@@ -8,7 +8,7 @@ package life
 import (
     "fmt"
     "bytes"
-    "math/rand"
+    "rand"
     "time"
 )
 
@@ -21,7 +21,7 @@ type Field struct {
 }
 
 func NewField(width, height uint32) *Field {
-    rand.Seed(int64(time.Nanosecond.Seconds()))
+    rand.Seed(time.Nanoseconds())
 
     cells := width*height
     return &Field{
