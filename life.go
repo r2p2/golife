@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const MAXWORKERINDEX = 1
+const MAXWORKERINDEX = 4
 
 type Field struct {
 	iteration             uint64
