@@ -145,6 +145,14 @@ func (f *Field) StringNeighborMap() string {
 	return string(sbuffer.Bytes())
 }
 
+func (f *Field) Height() int32 {
+	return f.height
+}
+
+func (f *Field) Width() int32 {
+	return f.width
+}
+
 func (f *Field) worker(workerIndex int32, resChan chan byte) {
 	var neighbors byte
 	var x, y int32

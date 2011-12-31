@@ -13,6 +13,7 @@ import (
 	"os"
 )
 
+var delayMs *int = flag.Int("delay", 125, "delay between iterations in ms")
 var width *int = flag.Int("width", 70, "width of a new generated map")
 var height *int = flag.Int("height", 30, "height of a new generated map")
 var fillRate *int = flag.Int("fill", 30, "fill rate of a new generated map 0-100")
@@ -23,6 +24,7 @@ var listMaps *bool = flag.Bool("list", false, "list the name of preinstalled map
 func main() {
 	flag.Parse()
 	var gol *Field
+	delayNs := int64(*delayMs * 1e6)
 
 	if *listMaps == true {
 		for name := range maps {
@@ -50,12 +52,13 @@ func main() {
 		gol.Initialize(float32(*fillRate) / 100)
 	}
 
-	fmt.Println(gol)
-	time.Sleep(0.125e9)
+	fmt.Print("\033[2J")
 	for {
-		gol.Step()
-		fmt.Print("\033[2J")
+		fmt.Printf("\033[%dA", gol.Height()+2)
+		fmt.Println("Iteration: ", gol.Iteration())
 		fmt.Println(gol)
-		time.Sleep(0.125e9)
+		gol.Step()
+		time.Sleep(delayNs)
+
 	}
 }
