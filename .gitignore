@@ -1,2 +1,4 @@
-*.8
+8.out
 golife
+*.8
+_test*
