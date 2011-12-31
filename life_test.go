@@ -10,13 +10,13 @@ import (
 	"testing"
 )
 
-var testcases [][3]uint32
+var testcases [][3]int32
 
 func init() {
-	testcases = [][3]uint32{
-		[3]uint32{0, 0, 0},
-		[3]uint32{2, 1, 7},
-		[3]uint32{3, 2, 13},
+	testcases = [][3]int32{
+		[3]int32{0, 0, 0},
+		[3]int32{2, 1, 7},
+		[3]int32{3, 2, 13},
 	}
 }
 
