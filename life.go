@@ -3,7 +3,7 @@
  * Date: 12/29/11
  * Time: 12:03 AM
  */
-package life
+package main
 
 import (
     "fmt"

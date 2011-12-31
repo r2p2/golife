@@ -4,7 +4,7 @@
  * Date: 12/29/11
  * Time: 7:54 PM
  */
-package life
+package main
 
 import (
     "testing"

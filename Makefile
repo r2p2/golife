@@ -1,8 +1,8 @@
-all:
-	8g life.go
-	8g main.go
-	8l main.8
+include $(GOROOT)/src/Make.inc
 
-clean:
-	rm *.8
-	rm 8.out
+TARG=golife
+GOFILES=\
+	main.go\
+	life.go
+
+include $(GOROOT)/src/Make.cmd

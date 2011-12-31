@@ -8,11 +8,10 @@ package main
 import (
     "fmt"
     "time"
-    "./life"
 )
 
 func main() {
-    gol := life.NewField(25, 25)
+    gol := NewField(25, 25)
     fmt.Println(gol)
     gol.Initialize(0.5)
 
