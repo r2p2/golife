@@ -21,6 +21,28 @@ var loadFile *string = flag.String("file", "", "load a map from file")
 var loadMap *string = flag.String("map", "", "load a preinstalled map")
 var listMaps *bool = flag.Bool("list", false, "list the name of preinstalled maps")
 
+func fpsCounter() func() uint32 {
+	var nextFPS, currentFPS uint32
+	var timestamp int64
+	return func() uint32 {
+		if timestamp == 0 {
+			nextFPS = 1
+			timestamp = time.Nanoseconds() + 1e9
+			return currentFPS
+		}
+
+		if now := time.Nanoseconds(); now >= timestamp {
+			currentFPS = nextFPS
+			nextFPS = 1
+
+			timestamp = now + 1e9
+		} else {
+			nextFPS++
+		}
+		return currentFPS
+	}
+}
+
 func main() {
 	flag.Parse()
 	var gol *Field
@@ -53,9 +75,10 @@ func main() {
 	}
 
 	fmt.Print("\033[2J")
+	fps := fpsCounter()
 	for {
 		fmt.Printf("\033[%dA", gol.Height()+2)
-		fmt.Println("Iteration: ", gol.Iteration())
+		fmt.Println("iteration: ", gol.Iteration(), " iterations per second: ", fps(), "   ")
 		fmt.Println(gol)
 		gol.Step()
 		time.Sleep(delayNs)
