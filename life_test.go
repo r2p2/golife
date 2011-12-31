@@ -10,14 +10,10 @@ import (
 	"testing"
 )
 
-var testcases [][3]int32
-
-func init() {
-	testcases = [][3]int32{
-		[3]int32{0, 0, 0},
-		[3]int32{2, 1, 7},
-		[3]int32{3, 2, 13},
-	}
+var testcases = [][3]int32{
+	{0, 0, 0},
+	{2, 1, 7},
+	{3, 2, 13},
 }
 
 func TestToArea(t *testing.T) {
