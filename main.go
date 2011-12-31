@@ -6,21 +6,21 @@
 package main
 
 import (
-    "fmt"
-    "time"
+	"fmt"
+	"time"
 )
 
 func main() {
-    gol := NewField(25, 25)
-    fmt.Println(gol)
-    gol.Initialize(0.5)
+	gol := NewField(25, 25)
+	fmt.Println(gol)
+	gol.Initialize(0.5)
 
-    fmt.Println(gol)
+	fmt.Println(gol)
 
-    for {
-        gol.Step()
-        fmt.Print("\033[2J")
-        fmt.Println(gol)
-        time.Sleep(0.125e9)
-    }
+	for {
+		gol.Step()
+		fmt.Print("\033[2J")
+		fmt.Println(gol)
+		time.Sleep(0.125e9)
+	}
 }
