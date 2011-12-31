@@ -49,20 +49,18 @@ func NewField(width, height int32) *Field {
 func NewFieldFromString(field string) *Field {
 	var width, height int32
 	lines := strings.Split(field, "\n")
-	width = int32(len(lines[0]))
+	height = int32(len(lines))
 	for _, line := range lines {
-		if int32(len(line)) == width {
-			height++
+		if linewidth := int32(len(line)); linewidth > width {
+			width = linewidth
 		}
 	}
 
 	newField := NewField(width, height)
 	for y, _ := range lines {
-		if int32(len(lines[y])) == width {
-			for x, _ := range lines[y] {
-				if lines[y][x] != ' ' {
-					newField.Set(int32(x), int32(y), 1)
-				}
+		for x, _ := range lines[y] {
+			if lines[y][x] != ' ' {
+				newField.Set(int32(x), int32(y), 1)
 			}
 		}
 	}
