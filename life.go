@@ -10,9 +10,22 @@ import (
 	"bytes"
 	"rand"
 	"time"
+	"strings"
+	"os"
 )
 
 const MAXWORKERINDEX = 4
+
+var maps = map[string]string{
+	"glider": "           \n" +
+		"   #       \n" +
+		"    #      \n" +
+		"  ###      \n" +
+		"           \n" +
+		"           \n" +
+		"           \n" +
+		"           \n",
+}
 
 type Field struct {
 	iteration             uint64
@@ -31,6 +44,38 @@ func NewField(width, height int32) *Field {
 		currentArea: make([]byte, cells),
 		nextArea:    make([]byte, cells),
 	}
+}
+
+func NewFieldFromString(field string) *Field {
+	var width, height int32
+	lines := strings.Split(field, "\n")
+	width = int32(len(lines[0]))
+	for _, line := range lines {
+		if int32(len(line)) == width {
+			height++
+		}
+	}
+
+	newField := NewField(width, height)
+	for y, _ := range lines {
+		if int32(len(lines[y])) == width {
+			for x, _ := range lines[y] {
+				if lines[y][x] != ' ' {
+					newField.Set(int32(x), int32(y), 1)
+				}
+			}
+		}
+	}
+
+	return newField
+}
+
+func NewFieldFromMap(name string) (*Field, os.Error) {
+	data, error := maps[name]
+	if error != true {
+		return nil, os.NewError("Unknown map: " + name)
+	}
+	return NewFieldFromString(data), nil
 }
 
 func (f *Field) Initialize(fillRate float32) {

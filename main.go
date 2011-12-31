@@ -11,9 +11,14 @@ import (
 )
 
 func main() {
-	gol := NewField(25, 25)
+	gol, error := NewFieldFromMap("glider")
+	if error != nil {
+		fmt.Println(error)
+		return
+	}
+	//gol := NewField(25, 25)
 	fmt.Println(gol)
-	gol.Initialize(0.5)
+	//Sgol.Initialize(0.5)
 
 	fmt.Println(gol)
 
