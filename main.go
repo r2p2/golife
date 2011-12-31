@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 	"flag"
+	"io/ioutil"
 	"os"
 )
 
@@ -38,8 +39,12 @@ func main() {
 			return
 		}
 	} else if *loadFile != "" {
-		fmt.Println("not implemented yet")
-		return
+		contents, error := ioutil.ReadFile(*loadFile)
+		if error != nil {
+			fmt.Println(error)
+			return
+		}
+		gol = NewFieldFromString(string(contents))
 	} else {
 		gol = NewField(int32(*width), int32(*height))
 		gol.Initialize(float32(*fillRate) / 100)
