@@ -47,3 +47,13 @@ func TestToReal(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkStep(b *testing.B) {
+    b.StopTimer()
+    field := NewField(500, 500)
+    field.Initialize(0.4)
+    b.StartTimer()
+    for i := 0; i < b.N; i++ {
+        field.Step()
+    }
+}
