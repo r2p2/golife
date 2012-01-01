@@ -14,6 +14,7 @@ import (
 )
 
 var delayMs *int = flag.Int("delay", 125, "delay between iterations in ms")
+var rule *string = flag.String("rule", "23/3", "modifies the gol rule")
 var width *int = flag.Int("width", 70, "width of a new generated map")
 var height *int = flag.Int("height", 30, "height of a new generated map")
 var fillRate *int = flag.Int("fill", 30, "fill rate of a new generated map 0-100")
@@ -72,6 +73,11 @@ func main() {
 	} else {
 		gol = NewField(int32(*width), int32(*height))
 		gol.Initialize(float32(*fillRate) / 100)
+	}
+
+	if error := gol.SetRule(*rule); error != nil {
+		fmt.Println(error)
+		return
 	}
 
 	fmt.Print("\033[2J")

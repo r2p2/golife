@@ -31,6 +31,8 @@ type Field struct {
 	iteration             uint64
 	width, height         int32
 	currentArea, nextArea []byte
+	ruleSurvive           byte
+	ruleBirth             byte
 }
 
 func NewField(width, height int32) *Field {
@@ -43,6 +45,8 @@ func NewField(width, height int32) *Field {
 		height:      height,
 		currentArea: make([]byte, cells),
 		nextArea:    make([]byte, cells),
+		ruleSurvive: 2,
+		ruleBirth:   4,
 	}
 }
 
@@ -94,6 +98,39 @@ func (f *Field) Clear() {
 
 func (f *Field) Set(x, y int32, value byte) {
 	f.currentArea[f.toArea(x, y)] = value
+}
+
+func (f *Field) SetRule(rule string) os.Error {
+	var newRuleSurvive, newRuleBirth byte
+
+	ruleArray := strings.Split(rule, "/")
+	if len(ruleArray) != 2 {
+		return os.NewError("Invalid rule format! Exactly one / is needed.")
+	}
+
+	for _, char := range ruleArray[1] {
+		if char < '1' || char > '9' {
+			return os.NewError("Invalid rule argument! Nubers needs to be between 1 and 9.")
+		}
+
+		newRuleBirth += byte(1 << uint(char-'1'))
+	}
+
+	for _, char := range ruleArray[0] {
+		if char < '1' || char > '9' {
+			return os.NewError("Invalid rule argument! Nubers needs to be between 1 and 9.")
+		}
+
+		bit := byte(1 << uint(char-'1'))
+		if (newRuleBirth & bit) == 0 {
+			newRuleSurvive += bit
+		}
+	}
+
+	f.ruleSurvive = newRuleSurvive
+	f.ruleBirth = newRuleBirth
+
+	return nil
 }
 
 func (f *Field) Step() {
@@ -154,18 +191,21 @@ func (f *Field) Width() int32 {
 }
 
 func (f *Field) worker(workerIndex int32, resChan chan byte) {
-	var neighbors byte
 	var x, y int32
 	for cellIndex := workerIndex - 1; cellIndex < f.CellCount(); cellIndex += workerIndex {
 		x, y = f.toReal(cellIndex)
-		neighbors = f.countNeighbors(x, y)
+		neighbors := f.countNeighbors(x, y)
 
-		if neighbors == 3 {
-			f.nextArea[cellIndex] = 1
-		} else if neighbors == 2 {
-			f.nextArea[cellIndex] = f.currentArea[cellIndex]
-		} else {
+		if neighbors == 0 {
 			f.nextArea[cellIndex] = 0
+		} else {
+			if neighborsBit := byte(1 << (neighbors - 1)); (f.ruleSurvive & neighborsBit) == neighborsBit {
+				f.nextArea[cellIndex] = f.currentArea[cellIndex]
+			} else if (f.ruleBirth & neighborsBit) == neighborsBit {
+				f.nextArea[cellIndex] = 1
+			} else {
+				f.nextArea[cellIndex] = 0
+			}
 		}
 	}
 	resChan <- 0
