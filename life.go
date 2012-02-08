@@ -6,12 +6,12 @@
 package main
 
 import (
-	"fmt"
 	"bytes"
-	"rand"
-	"time"
+	"errors"
+	"fmt"
+	"math/rand"
 	"strings"
-	"os"
+	"time"
 )
 
 const MAXWORKERINDEX = 4
@@ -36,7 +36,7 @@ type Field struct {
 }
 
 func NewField(width, height int32) *Field {
-	rand.Seed(time.Nanoseconds())
+	rand.Seed(time.Now().UnixNano())
 
 	cells := width * height
 	return &Field{
@@ -72,10 +72,10 @@ func NewFieldFromString(field string) *Field {
 	return newField
 }
 
-func NewFieldFromMap(name string) (*Field, os.Error) {
+func NewFieldFromMap(name string) (*Field, error) {
 	data, error := maps[name]
 	if error != true {
-		return nil, os.NewError("Unknown map: " + name)
+		return nil, errors.New("Unknown map: " + name)
 	}
 	return NewFieldFromString(data), nil
 }
@@ -100,17 +100,17 @@ func (f *Field) Set(x, y int32, value byte) {
 	f.currentArea[f.toArea(x, y)] = value
 }
 
-func (f *Field) SetRule(rule string) os.Error {
+func (f *Field) SetRule(rule string) error {
 	var newRuleSurvive, newRuleBirth byte
 
 	ruleArray := strings.Split(rule, "/")
 	if len(ruleArray) != 2 {
-		return os.NewError("Invalid rule format! Exactly one / is needed.")
+		return errors.New("Invalid rule format! Exactly one / is needed.")
 	}
 
 	for _, char := range ruleArray[1] {
 		if char < '1' || char > '9' {
-			return os.NewError("Invalid rule argument! Nubers needs to be between 1 and 9.")
+			return errors.New("Invalid rule argument! Nubers needs to be between 1 and 9.")
 		}
 
 		newRuleBirth += byte(1 << uint(char-'1'))
@@ -118,7 +118,7 @@ func (f *Field) SetRule(rule string) os.Error {
 
 	for _, char := range ruleArray[0] {
 		if char < '1' || char > '9' {
-			return os.NewError("Invalid rule argument! Nubers needs to be between 1 and 9.")
+			return errors.New("Invalid rule argument! Nubers needs to be between 1 and 9.")
 		}
 
 		bit := byte(1 << uint(char-'1'))

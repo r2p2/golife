@@ -6,11 +6,10 @@
 package main
 
 import (
-	"fmt"
-	"time"
 	"flag"
+	"fmt"
 	"io/ioutil"
-	"os"
+	"time"
 )
 
 var delayMs *int = flag.Int("delay", 125, "delay between iterations in ms")
@@ -24,19 +23,18 @@ var listMaps *bool = flag.Bool("list", false, "list the name of preinstalled map
 
 func fpsCounter() func() uint32 {
 	var nextFPS, currentFPS uint32
-	var timestamp int64
-	return func() uint32 {
-		if timestamp == 0 {
-			nextFPS = 1
-			timestamp = time.Nanoseconds() + 1e9
-			return currentFPS
-		}
+	var timestamp time.Time
+	fpsDelay, _ := time.ParseDuration("1s")
 
-		if now := time.Nanoseconds(); now >= timestamp {
+	nextFPS = 1
+	currentTime := time.Now()
+	timestamp = currentTime.Add(fpsDelay)
+
+	return func() uint32 {
+		if now := time.Now(); timestamp.Sub(now) <= 0 {
 			currentFPS = nextFPS
 			nextFPS = 1
-
-			timestamp = now + 1e9
+			timestamp = now.Add(fpsDelay)
 		} else {
 			nextFPS++
 		}
@@ -57,7 +55,7 @@ func main() {
 	}
 
 	if *loadMap != "" {
-		var error os.Error
+		var error error
 		gol, error = NewFieldFromMap(*loadMap)
 		if error != nil {
 			fmt.Println(error)
@@ -87,7 +85,6 @@ func main() {
 		fmt.Println("iteration: ", gol.Iteration(), " iterations per second: ", fps(), "   ")
 		fmt.Println(gol)
 		gol.Step()
-		time.Sleep(delayNs)
-
+		time.Sleep(time.Duration(delayNs))
 	}
 }
