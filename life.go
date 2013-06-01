@@ -192,7 +192,7 @@ func (f *Field) Width() int32 {
 
 func (f *Field) worker(workerIndex int32, resChan chan byte) {
 	var x, y int32
-	for cellIndex := workerIndex - 1; cellIndex < f.CellCount(); cellIndex += workerIndex {
+	for cellIndex := workerIndex - 1; cellIndex < f.CellCount(); cellIndex += MAXWORKERINDEX {
 		x, y = f.toReal(cellIndex)
 		neighbors := f.countNeighbors(x, y)
 
